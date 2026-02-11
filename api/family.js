@@ -1,10 +1,12 @@
 export default function handler(req, res) {
+
   const { key, aadhar } = req.query;
 
-  const SECRET_KEY = process.env.shelby;
+  // Secret key from Vercel Environment Variable
+  const SECRET_KEY = process.env.Shelby;
 
-  // 🔐 API KEY CHECK
-  if (!key || key !== SECRET_KEY) {
+  // Key check
+  if (key !== SECRET_KEY) {
     return res.status(403).json({
       success: false,
       message: "Invalid API Key",
@@ -12,33 +14,21 @@ export default function handler(req, res) {
     });
   }
 
-  // 📌 Aadhaar Required
+  // Aadhar check
   if (!aadhar) {
     return res.status(400).json({
       success: false,
-      message: "Aadhar number required",
+      message: "Aadhar parameter missing",
       created_by: "harsh_shelby"
     });
   }
 
-  // 🛡 Aadhaar Format Check (12 digits only)
-  if (!/^[0-9]{12}$/.test(aadhar)) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid Aadhar format (must be 12 digits)",
-      created_by: "harsh_shelby"
-    });
-  }
-
-  // ✅ Success Response
+  // Success response
   return res.status(200).json({
-    api_name: "RIO FAMILY API",
-    owner: "harsh_shelby",
     success: true,
-    data: {
-      aadhar: aadhar,
-      name: "Demo User",
-      status: "Active"
-    }
+    created_by: "harsh_shelby",
+    message: "API Working Successfully",
+    aadhar_received: aadhar
   });
+
 }
