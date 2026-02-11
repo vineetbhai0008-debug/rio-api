@@ -16,14 +16,14 @@ export default async function handler(req, res) {
 
     const { key, aadhar } = req.query;
 
-    // Key validation - NEW KEY: Shelby=2009
-    if (key !== 'Shelby' || req.headers['x-api-key'] !== '2009') {
-      return res.status(401).json({ error: 'Invalid key' });
+    // FIXED: Sirf key=Shelby check karo
+    if (key !== 'Shelby') {
+      return res.status(401).json({ error: 'Invalid key. Use key=Shelby' });
     }
 
     // Aadhar validation
     if (!aadhar || aadhar.length !== 12 || isNaN(aadhar)) {
-      return res.status(400).json({ error: 'Invalid Aadhar number' });
+      return res.status(400).json({ error: 'Invalid Aadhar number (12 digits)' });
     }
 
     // Original API call
@@ -32,15 +32,16 @@ export default async function handler(req, res) {
     const response = await fetch(originalApiUrl);
     
     if (!response.ok) {
-      return res.status(response.status).json({ error: 'Data not found' });
+      return res.status(response.status).json({ error: 'Data not found for this Aadhar' });
     }
 
     const data = await response.json();
 
-    // Modified response with your credit
+    // Your branding
     const modifiedResponse = {
       ...data,
       credits: "api created by harsh_shelby",
+      api_key: "Shelby",
       source: "https://github.com/YOUR_USERNAME/family-api"
     };
 
@@ -49,7 +50,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ 
-      error: 'Internal server error',
+      error: 'Server error',
       credits: "api created by harsh_shelby"
     });
   }
